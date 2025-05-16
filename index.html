@@ -14,9 +14,22 @@
       width: 100%;
       overflow: auto;
     }
+    #top-image-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      z-index: 2000;
+    }
+    #top-image {
+      display: block;
+      width: 100vw;
+      height: auto;
+    }
     #image-container {
       position: relative;
       width: 100%;
+      padding-top: calc(100vw * (9 / 16)); /* Adjust depending on image aspect ratio */
     }
     #main-image {
       display: block;
@@ -33,11 +46,15 @@
       color: white;
       border: none;
       cursor: pointer;
-      z-index: 1000;
+      z-index: 3000;
     }
   </style>
 </head>
 <body>
+  <div id="top-image-container">
+    <img id="top-image" src="header.png" alt="Top Sticky Image">
+  </div>
+
   <div id="image-container">
     <button id="fullscreen-btn">Fullscreen</button>
     <img id="main-image" src="website.png" alt="Full Width Image">
