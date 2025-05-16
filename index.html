@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fullscreen Image Viewer</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    html, body {
+      width: 100%;
+      overflow: auto;
+    }
+    #image-container {
+      position: relative;
+      width: 100%;
+    }
+    #main-image {
+      display: block;
+      width: 100vw;
+      height: auto;
+    }
+    #fullscreen-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+      background: black;
+      color: white;
+      border: none;
+      cursor: pointer;
+      z-index: 1000;
+    }
+  </style>
+</head>
+<body>
+  <div id="image-container">
+    <button id="fullscreen-btn">Fullscreen</button>
+    <img id="main-image" src="website.png" alt="Full Width Image">
+  </div>
+
+  <script>
+    const btn = document.getElementById('fullscreen-btn');
+    btn.addEventListener('click', () => {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().then(() => {
+          btn.style.display = 'none';
+        });
+      }
+    });
+  </script>
+</body>
+</html>
