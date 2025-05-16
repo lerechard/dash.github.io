@@ -12,7 +12,8 @@
     }
     html, body {
       width: 100%;
-      overflow: auto;
+      height: 100%;
+      overflow: hidden;
     }
     #top-image-container {
       position: fixed;
@@ -27,9 +28,14 @@
       height: auto;
     }
     #image-container {
-      position: relative;
-      width: 100%;
-      padding-top: calc(100vw * (9 / 16)); /* Adjust depending on image aspect ratio */
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
     }
     #main-image {
       display: block;
@@ -63,10 +69,18 @@
   <script>
     const btn = document.getElementById('fullscreen-btn');
     btn.addEventListener('click', () => {
-      if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen().then(() => {
-          btn.style.display = 'none';
-        });
+      const docEl = document.documentElement;
+      const requestFullscreen =
+        docEl.requestFullscreen ||
+        docEl.webkitRequestFullscreen ||
+        docEl.mozRequestFullScreen ||
+        docEl.msRequestFullscreen;
+
+      if (requestFullscreen) {
+        requestFullscreen.call(docEl);
+        btn.style.display = 'none';
+      } else {
+        alert('Fullscreen API is not supported on this device.');
       }
     });
   </script>
