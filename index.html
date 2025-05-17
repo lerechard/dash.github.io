@@ -28,33 +28,28 @@
       width: 100%;
       height: auto;
     }
-
-    /* Push content down by the height of the header image */
     #image-container {
-      padding-top: 0px; /* will be set dynamically in JS */
+      padding-top: 0px; /* dynamically set */
     }
-
     #main-image {
       display: block;
       width: 100%;
       height: auto;
     }
-
     #fullscreen-btn {
       position: fixed;
-      top: 20px;
-      right: 20px;
-      padding: 10px 20px;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 12px 24px;
       font-size: 16px;
       background: black;
       color: white;
       border: none;
+      border-radius: 8px;
       cursor: pointer;
-      z-index: 2000;
-    }
-
-    .hidden {
-      display: none;
+      z-index: 3000;
+      opacity: 0.9;
     }
   </style>
 </head>
@@ -69,7 +64,7 @@
   </div>
 
   <script>
-    // Push content below the fixed header
+    // Adjust padding below fixed header
     const topImage = document.getElementById('top-image');
     const imageContainer = document.getElementById('image-container');
 
@@ -80,7 +75,7 @@
     window.addEventListener('load', updatePadding);
     window.addEventListener('resize', updatePadding);
 
-    // Fullscreen logic
+    // Fullscreen button logic
     const btn = document.getElementById('fullscreen-btn');
     const docEl = document.documentElement;
     const requestFullscreen =
@@ -89,16 +84,19 @@
       docEl.mozRequestFullScreen ||
       docEl.msRequestFullscreen;
 
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-
-    if (!requestFullscreen || isIOS) {
-      btn.classList.add('hidden'); // Hide button if fullscreen not supported
-    } else {
-      btn.addEventListener('click', () => {
-        requestFullscreen.call(docEl);
-        btn.style.display = 'none';
-      });
-    }
+    btn.addEventListener('click', () => {
+      if (requestFullscreen) {
+        requestFullscreen.call(docEl)
+          .then(() => {
+            btn.style.display = 'none';
+          })
+          .catch(err => {
+            console.warn('Fullscreen request failed', err);
+          });
+      } else {
+        console.warn('Fullscreen API not supported');
+      }
+    });
   </script>
 </body>
 </html>
