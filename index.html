@@ -29,7 +29,7 @@
       height: auto;
     }
     #image-container {
-      padding-top: 0px; /* dynamically set */
+      padding-top: 0px; /* Set dynamically below */
     }
     #main-image {
       display: block;
@@ -54,17 +54,19 @@
   </style>
 </head>
 <body>
+  <!-- Sticky Header -->
   <div id="top-image-container">
     <img id="top-image" src="header.png" alt="Top Sticky Image" />
   </div>
 
+  <!-- Scrollable Image -->
   <div id="image-container">
     <button id="fullscreen-btn">Fullscreen</button>
-    <img id="main-image" src="website.png" alt="Scrollable Full Width Image" />
+    <img id="main-image" src="website_updated.png" alt="Updated Website Image" />
   </div>
 
   <script>
-    // Adjust padding below fixed header
+    // Push content below fixed header
     const topImage = document.getElementById('top-image');
     const imageContainer = document.getElementById('image-container');
 
@@ -94,7 +96,7 @@
             console.warn('Fullscreen request failed', err);
           });
       } else {
-        console.warn('Fullscreen API not supported');
+        console.warn('Fullscreen API not supported on this device.');
       }
     });
   </script>
