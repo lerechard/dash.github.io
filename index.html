@@ -3,19 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Fullscreen Image Viewer</title>
+  <title>Dynamic Image Site</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    html, body {
-      width: 100%;
-      height: 100%;
-      overflow-x: hidden;
-      overflow-y: auto;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; overflow-x: hidden; overflow-y: auto; font-family: sans-serif; }
+
     #top-image-container {
       position: fixed;
       top: 0;
@@ -28,14 +20,23 @@
       width: 100%;
       height: auto;
     }
-    #image-container {
-      padding-top: 0px; /* Set dynamically below */
+
+    #setup-ui {
+      margin-top: 300px;
+      text-align: center;
     }
-    #main-image {
-      display: block;
-      width: 100%;
+
+    canvas {
+      max-width: 100%;
       height: auto;
+      display: block;
+      margin: 20px auto;
     }
+
+    #upload-section {
+      margin-top: 20px;
+    }
+
     #fullscreen-btn {
       position: fixed;
       bottom: 20px;
@@ -50,6 +51,7 @@
       cursor: pointer;
       z-index: 3000;
       opacity: 0.9;
+      display: none;
     }
   </style>
 </head>
@@ -59,25 +61,83 @@
     <img id="top-image" src="header.png" alt="Top Sticky Image" />
   </div>
 
-  <!-- Scrollable Image -->
-  <div id="image-container">
-    <button id="fullscreen-btn">Fullscreen</button>
-    <img id="main-image" src="website_updated.png" alt="Updated Website Image" />
+  <!-- Initial Setup UI -->
+  <div id="setup-ui">
+    <h2>Preparing your image...</h2>
+    <canvas id="edit-canvas"></canvas>
+    <a id="download-link" download="website_updated.png">Download Updated Image</a>
+
+    <div id="upload-section">
+      <p>Upload the updated image to launch fullscreen viewer:</p>
+      <input type="file" id="image-upload" accept="image/png,image/jpeg" />
+    </div>
   </div>
 
+  <!-- Fullscreen Button -->
+  <button id="fullscreen-btn">Fullscreen</button>
+
   <script>
-    // Push content below fixed header
-    const topImage = document.getElementById('top-image');
-    const imageContainer = document.getElementById('image-container');
+    // Replace "Apr 999" with current date on canvas
+    const canvas = document.getElementById('edit-canvas');
+    const ctx = canvas.getContext('2d');
+    const image = new Image();
+    image.src = 'website.png';
 
-    function updatePadding() {
-      imageContainer.style.paddingTop = topImage.offsetHeight + 'px';
-    }
+    image.onload = () => {
+      canvas.width = image.width;
+      canvas.height = image.height;
+      ctx.drawImage(image, 0, 0);
 
-    window.addEventListener('load', updatePadding);
-    window.addEventListener('resize', updatePadding);
+      // Overlay current date
+      const now = new Date();
+      const dateStr = now.toLocaleString('en-US', { month: 'short', day: 'numeric' });
 
-    // Fullscreen button logic
+      // You may need to adjust coordinates/font to match the design
+      ctx.font = 'bold 64px Arial';
+      ctx.fillStyle = 'black';
+      ctx.fillText(dateStr, 100, 150); // Change position to match "Apr 999"
+
+      // Enable download
+      const downloadLink = document.getElementById('download-link');
+      downloadLink.href = canvas.toDataURL('image/png');
+      downloadLink.textContent = 'Download Updated Image';
+    };
+
+    // Handle uploaded image
+    document.getElementById('image-upload').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function (event) {
+        const uploadedImage = new Image();
+        uploadedImage.src = event.target.result;
+        uploadedImage.onload = () => {
+          // Clear UI
+          document.getElementById('setup-ui').remove();
+
+          // Create full image view
+          const img = document.createElement('img');
+          img.src = uploadedImage.src;
+          img.style.display = 'block';
+          img.style.width = '100%';
+          img.style.height = 'auto';
+          img.id = 'main-image';
+
+          const container = document.createElement('div');
+          container.id = 'image-container';
+          container.style.paddingTop = document.getElementById('top-image').offsetHeight + 'px';
+          container.appendChild(img);
+          document.body.appendChild(container);
+
+          // Show fullscreen button
+          document.getElementById('fullscreen-btn').style.display = 'block';
+        };
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // Fullscreen functionality
     const btn = document.getElementById('fullscreen-btn');
     const docEl = document.documentElement;
     const requestFullscreen =
@@ -95,8 +155,6 @@
           .catch(err => {
             console.warn('Fullscreen request failed', err);
           });
-      } else {
-        console.warn('Fullscreen API not supported on this device.');
       }
     });
   </script>
